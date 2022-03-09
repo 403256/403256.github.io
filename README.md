@@ -14,19 +14,20 @@ Objects:
   * _`drawRect()`_
   * _`mouseX`_
   * _`mouseY`_
-* _`Sprite`_
-  * _`x`_
-  * _`y`_
-  * _`dx`_
-  * _`dy`_
-  * _`scale`_
-  * _`width`_
-  * _`height`_
-  * _`visible`_
+* `Sprite`
+  * `x`
+  * `y`
+  * `dx`
+  * `dy`
+  * `scale`
+  * `width`
+  * `height`
+  * `visible`
   * _`mirrorX`_
   * _`mirrorY`_
-  * _`depth`_
+  * `depth`
   * _`rotate()`_
+  * `move()`
   * _`animationSpeed`_
   * _`isTouching()`_
   * _`setCollider()`_
