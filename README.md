@@ -6,10 +6,8 @@ Objects:
 *Italics will be added later*
 
 * `Camera`
-  * _`on()`_
-  * _`off()`_
   * _`move()`_
-  * _`zoom()`_
+  * `changeZoom()`
   * _`drawScreen()`_
   * _`drawRect()`_
   * _`mouseX`_
@@ -31,7 +29,7 @@ Objects:
   * _`animationSpeed`_
   * _`isTouching()`_
   * _`setCollider()`_
-  * _`setVelocity()`_
+  * `setVelocity()`
   * _`destroy()`_
 * `Miscellaneous`
   * `start()`

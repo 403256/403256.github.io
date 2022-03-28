@@ -20,7 +20,7 @@ class GameEngine {
 
     this.sprites = [];
 
-    this.activeCamera = new Camera(0, 0, 1);
+    this.activeCamera = new Camera(this.ctx, 0, 0, 1);
     this.cameras = [this.activeCamera];
 
     // Add event handlers
@@ -42,26 +42,17 @@ class GameEngine {
 
   loop() {
     this.animation = requestAnimationFrame(this.loop.bind(this));
-    this.draw();
+    this.activeCamera.drawScreen();
     this.update();
   }
 
-  addSprite(sprite) {
-    this.sprites.push(sprite);
+  addCamera(x, y, zoom) {
+    let camera = new Camera(this.ctx, x, y, zoom);
+    return this.cameras.push(camera) - 1;
   }
 
-  draw() {
-    let length = this.sprites.length;
-    for(let i = 0; i < length; i++) {
-      let sprite = this.sprites[i];
-      this.activeCamera.draw(this.ctx,
-          sprite.src, sprite.sx, sprite.sy, sprite.sWidth, sprite.sHeight,
-          sprite.x, sprite.y, sprite.width, sprite.height);
-    }
-  }
-
-  changeCamera(cameraNumber) {
-    this.activeCamera = this.cameras[cameraNumber];
+  changeCamera(cameraID) {
+    this.activeCamera = this.cameras[cameraID];
   }
 
   zoomCamera(zoomFactor) {
@@ -70,9 +61,30 @@ class GameEngine {
 }
 
 class Sprite {
+  static sprites = [];
+  /**
+   * Creates a sprite object for display
+   * @param {Number}  x                 x-value in game map
+   * @param {Number}  y                 y-value in game map
+   * @param {Number}  width             sprite's default display width
+   * @param {Number}  height            sprite's default display height
+   * @param {Image}   imgSrc            The image object to display
+   * @param {Number}  [scale=1]         sprite's display scale
+   * @param {Boolean} [visible=true]    whether to display the sprite
+   * @param {Number}  [depth=0]         sprite's display ordering
+   * @param {Number}  [angle=0]         sprite's display angle (degrees)
+   * @param {Number}  [sx=0]            spritesheet's x-value
+   * @param {Number}  [sy=0]            spritesheet's y-value
+   * @param {Number}  [sWidth=width]    spritesheet's sprite width
+   * @param {Number}  [sHeight=height]  spritesheet's sprite height
+   * @param {Number}  [dx=0]            object's x velocity
+   * @param {Number}  [dy=0}]           object's y velocity
+   */
   constructor(x, y, width, height,
       imgSrc,
-      {scale = 1, visible = true, depth = 0, sx = 0, sy = 0, sWidth = width, sHeight = height, dx = 0, dy = 0}) {
+      {scale = 1, visible = true, depth = 0, angle = 0,
+          sx = 0, sy = 0, sWidth = width, sHeight = height,
+          dx = 0, dy = 0}) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -82,6 +94,7 @@ class Sprite {
     this.sWidth = sWidth;
     this.sHeight = sHeight;
     this.scale = scale;
+    this.angle = angle;
     this.visible = visible;
 
     this.src = new Image();
@@ -90,11 +103,30 @@ class Sprite {
 
     this.dx = dx;
     this.dy = dy;
+
+    Sprite.sprites.push(this);
   }
 
   move() {
     this.x += this.dx;
     this.y += this.dy;
+  }
+
+  setVelocity(dx, dy) {
+    this.dx = dx;
+    this.dy = dy;
+  }
+
+  /**
+   * Rotate the sprite when displaying (cumulative, does NOT reset)
+   * @param {Number} angle The number of degrees to rotate
+   */
+  rotate(angle) {
+    this.angle += angle;
+  }
+
+  destroy() {
+
   }
 }
 
@@ -105,21 +137,12 @@ class Camera {
    * @param {Number} y         Starting right edge of camera
    * @param {Number} [zoom=1]  Starting zoom
    */
-  constructor(x, y, zoom = 1) {
+  constructor(ctx, x, y, zoom = 1) {
+    this.ctx = ctx;
+
     this.x = x;
     this.y = y;
     this.zoom = zoom;
-  }
-
-  draw(ctx, src, sx, sy, sWidth, sHeight, x, y, width, height) {
-    x = (x - this.x);
-    y = (y - this.y);
-    width = (width * this.zoom);
-    height = (height * this.zoom);
-
-    ctx.drawImage(src,
-        sx, sy, sWidth, sHeight,
-        x, y, width, height);
   }
 
   changeZoom(zoomFactor = 'reset') {
@@ -131,5 +154,21 @@ class Camera {
 
   move() {
 
+  }
+
+  drawScreen() {
+    let length = Sprite.sprites.length;
+    for(let i = 0; i < length; i++) {
+      let sprite = Sprite.sprites[i];
+      let x = (sprite.x - this.x);
+      let y = (sprite.y - this.y);
+      let width = (sprite.width * this.zoom);
+      let height = (sprite.height * this.zoom);
+
+      this.ctx.drawImage(
+          sprite.src,
+          sprite.sx, sprite.sy, sprite.sWidth, sprite.sHeight,
+          x, y, width, height);
+    }
   }
 }
