@@ -20,8 +20,9 @@ class GameEngine {
 
     this.sprites = [];
 
-    this.activeCamera = new Camera(this.ctx, 0, 0, 1);
-    this.cameras = [this.activeCamera];
+    this.cameras = [];
+    this.addCamera(0, 0, 1);
+    this.activeCamera = this.cameras[0];
 
     // Add event handlers
     document.addEventListener('keydown', this);
@@ -47,7 +48,7 @@ class GameEngine {
   }
 
   addCamera(x, y, zoom) {
-    let camera = new Camera(this.ctx, x, y, zoom);
+    let camera = new Camera(this.ctx, this.canvas.width, this.canvas.height, x, y, zoom);
     return this.cameras.push(camera) - 1;
   }
 
@@ -81,8 +82,8 @@ class Sprite {
    * @param {Number}  [dy=0}]           object's y velocity
    */
   constructor(x, y, width, height,
-      imgSrc,
-      {scale = 1, visible = true, depth = 0, angle = 0,
+      imgSrc, sheetWidth, sheetDepth,
+      {scale = 1, visible = true, depth = 0, angle = 0, fps = 30,
           sx = 0, sy = 0, sWidth = width, sHeight = height,
           dx = 0, dy = 0}) {
     this.x = x;
@@ -99,6 +100,10 @@ class Sprite {
 
     this.src = new Image();
     this.src.src = imgSrc;
+    this.sheetWidth = sheetWidth;
+    this.sheetDepth = sheetDepth;
+    this.fps = fps;
+    this.lastUpdate = (new Date()).getTime();
     this.depth = depth;
 
     this.dx = dx;
@@ -125,6 +130,32 @@ class Sprite {
     this.angle += angle;
   }
 
+  updateAnimation(id) {
+    this.sy = id * this.sHeight;
+  }
+
+  updateFrame() {
+    if(this.lastUpdate + (this.fps * 1000) > (new Date()).getTime()) return;
+
+    this.sx += this.sWidth;
+    if(this.sx > this.sheetWidth) this.sx = 0;
+    this.lastUpdate = (new Date()).getTime();
+  }
+
+  draw(ctx, offsetX, offsetY, zoom) {
+    let x = (this.x - offsetX);
+    let y = (this.y - offsetY);
+    let width = (this.width * zoom);
+    let height = (this.height * zoom);
+
+    ctx.drawImage(
+        this.src,
+        this.sx, this.sy, this.sWidth, this.sHeight,
+        x, y, width, height);
+
+    this.updateFrame();
+  }
+
   destroy() {
 
   }
@@ -137,11 +168,13 @@ class Camera {
    * @param {Number} y         Starting right edge of camera
    * @param {Number} [zoom=1]  Starting zoom
    */
-  constructor(ctx, x, y, zoom = 1) {
+  constructor(ctx, width, height, x, y, zoom = 1) {
     this.ctx = ctx;
 
     this.x = x;
     this.y = y;
+    this.width = width;
+    this.height = height;
     this.zoom = zoom;
   }
 
@@ -152,23 +185,23 @@ class Camera {
       this.zoom = 1;
   }
 
-  move() {
+  moveToCenter(object) {
+    let x = object.x + (object.width / 2);
+    let y = object.y + (object.width / 2);
 
+    x -= this.width / 2;
+    y -= this.height / 2;
+
+    this.x = x;
+    this.y = y;
   }
 
   drawScreen() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+
     let length = Sprite.sprites.length;
     for(let i = 0; i < length; i++) {
-      let sprite = Sprite.sprites[i];
-      let x = (sprite.x - this.x);
-      let y = (sprite.y - this.y);
-      let width = (sprite.width * this.zoom);
-      let height = (sprite.height * this.zoom);
-
-      this.ctx.drawImage(
-          sprite.src,
-          sprite.sx, sprite.sy, sprite.sWidth, sprite.sHeight,
-          x, y, width, height);
+      Sprite.sprites[i].draw(this.ctx, this.x, this.y, this.zoom);
     }
   }
 }
