@@ -7,4 +7,4 @@ function loopMe() {
   if(player.x > 1000) game.stop();
 }
 
-game.start();
+window.addEventListener('load', game.start.bind(game));
