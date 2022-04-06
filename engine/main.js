@@ -19,6 +19,7 @@ class GameEngine {
     this.update = updateFctn;
 
     this.sprites = [];
+    this.maps = [];
 
     this.cameras = [];
     this.addCamera(0, 0, 1);
@@ -29,34 +30,50 @@ class GameEngine {
     document.addEventListener('keyup', this);
   }
 
-  handleEvent(event) {
+  handleEvent = (event) => {
     // console.log(event.type);
   }
 
-  start() {
-    this.animation = requestAnimationFrame(this.loop.bind(this));
+  start = (forceStart = false) => {
+    if(!forceStart && document.readyState != 'complete') {
+      window.addEventListener('load', this.start);
+      return;
+    }
+    this.animation = requestAnimationFrame(this.loop);
   }
 
-  stop() {
+  stop = () => {
     cancelAnimationFrame(this.animation);
   }
 
-  loop() {
-    this.animation = requestAnimationFrame(this.loop.bind(this));
-    this.activeCamera.drawScreen();
+  loop = () => {
+    this.animation = requestAnimationFrame(this.loop);
+    this.activeCamera.drawScreen(this.currentMap);
     this.update();
   }
 
-  addCamera(x, y, zoom) {
+  addCamera = (x, y, zoom) => {
     let camera = new Camera(this.ctx, this.canvas.width, this.canvas.height, x, y, zoom);
     return this.cameras.push(camera) - 1;
   }
 
-  changeCamera(cameraID) {
+  changeCamera = (cameraID) => {
     this.activeCamera = this.cameras[cameraID];
   }
 
-  zoomCamera(zoomFactor) {
+  addMap = (map) => {
+    let index = this.maps.push(map) - 1;
+
+    if(index == 0) this.currentMap = map;
+
+    return index;
+  }
+
+  changeMap = (index) => {
+    this.currentMap = this.maps[index];
+  }
+
+  zoomCamera = (zoomFactor) => {
     this.activeCamera.changeZoom(zoomFactor);
   }
 }

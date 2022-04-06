@@ -48,8 +48,10 @@ class Camera {
   /**
    * completely fill the screen with sprites in camera's view
    */
-  drawScreen() {
+  drawScreen(map) {
     this.ctx.clearRect(0, 0, this.width, this.height);
+
+    map.draw();
 
     let length = Sprite.sprites.length;
     for(let i = 0; i < length; i++) {
