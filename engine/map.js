@@ -1,18 +1,27 @@
 class Map {
   constructor(
-      spritesheet, tileWidth, tileHeight,
-      widthInTiles, heightInTiles) {
-    this.spritesheet = new Image();
-    this.spritesheet.src = spritesheet;
-    this.tileWidth = tileWidth;
-    this.tileHeight = tileHeight;
+      jsonFileName) {
 
-    this.widthInTiles = widthInTiles;
-    this.heightInTiles = heightInTiles;
-    this.width = widthInTiles * tileWidth;
-    this.height = heightInTiles * tileHeight;
+    let data = fetch(jsonFileName)
+        .then(response => response.json())
+        .then(json => {
+          let data = {};
+          data.spritesheet = new Image();
+          data.spritesheet.src = json.tilesets[0].image;
+          data.tileWidth = json.tilewidth;
+          data.tileHeight = json.tileheight;
 
-    this.ctx = document.querySelector('canvas').getContext('2d');
+          data.widthInTiles = json.width;
+          data.heightInTiles = json.height;
+          data.width = data.widthInTiles * data.tileWidth;
+          data.height = data.heightInTiles * data.tileHeight;
+
+          data.ctx = document.querySelector('canvas').getContext('2d');
+
+          return data;
+        });
+
+    this.assign(data);
   }
 
   draw = () => {
