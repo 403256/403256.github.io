@@ -4,45 +4,47 @@ class Map {
     fetch(jsonFileName)
         .then(response => response.json())
         .then(json => {
-          let data = {};
-          data.spritesheet = new Image();
-          data.spritesheet.src = json.tilesets[0].image;
-          data.tileWidth = json.tilewidth;
-          data.tileHeight = json.tileheight;
+          this.spritesheet = new Image();
+          this.spritesheet.src = json.tilesets[0].image;
+          this.map = json.layers;
+          this.layers = json.layers.keys();
 
-          data.widthInTiles = json.width;
-          data.heightInTiles = json.height;
-          data.width = data.widthInTiles * data.tileWidth;
-          data.height = data.heightInTiles * data.tileHeight;
+          this.sheetInfo = {
+            columns: json.tilesets[0].columns,
+            rows: json.tilesets[0].rows,
+            firstgid:  json.tilesets[0].firstgid,
+            width:  json.tilesets[0].imagewidth,
+            height:  json.tilesets[0].imageheight,
+          }
 
-          data.ctx = document.querySelector('canvas').getContext('2d');
+          this.tileWidth = json.tilewidth;
+          this.tileHeight = json.tileheight;
 
-          this.assign(data);
+          this.widthInTiles = json.width;
+          this.heightInTiles = json.height;
+          this.width = this.widthInTiles * this.tileWidth;
+          this.height = this.heightInTiles * this.tileHeight;
+
+          this.ctx = document.querySelector('canvas').getContext('2d');
         });
   }
 
   draw = () => {
-    let map = [[1, 1, 1, 1, 1, 1, 1, 1],
-               [1, 1, 1, 1, 1, 1, 1, 1],
-               [1, 1, 1, 1, 1, 1, 1, 1],
-               [2, 2, 2, 2, 2, 2, 2, 2],
-               [3, 3, 3, 3, 3, 3, 3, 3],
-               [3, 3, 3, 3, 3, 3, 3, 3],
-               [3, 3, 3, 3, 3, 3, 3, 3],
-               [3, 3, 3, 3, 3, 3, 3, 3]];
+    for(let i = 0; i < this.layers.length; i++) {
+      let map = this.map[this.layers[i]];
 
-    for(let i = 0; i < map.length; i++) {
-      for(let j = 0; j < map[i].length; j++) {
-        switch(map[i][j]) {
-          case 1:
-            this.ctx.drawImage(this.spritesheet, 64, 0, 64, 64, j*64, i*64, 64, 64);
-            break;
-          case 2:
-            this.ctx.drawImage(this.spritesheet, 128, 0, 64, 64, j*64, i*64, 64, 64);
-            break;
-          case 3:
-            this.ctx.drawImage(this.spritesheet, 0, 64, 64, 64, j*64, i*64, 64, 64);
-        }
+      if(!map.visible) continue;
+
+      for(let j = 0; j < map.data.length; j++) {
+        let cell = map.data[j];
+        let sy = Math.floor(cell / this.sheetInfo.columns) * this.tileHeight;
+        let sx = (cell % this.sheetInfo.columns) * this.tileWidth;
+        let dy = Math.floor(j / this.widthInTiles) * this.tileHeight;
+        let dx = (j % this.widthInTiles) * this.tileWidth;
+        this.ctx.drawImage(
+            this.spritesheet,
+            sx, sy, this.tileWidth, this.tileHeight,
+            dx, dy, this.tileWidth, this.tileHeight);
       }
     }
   }
