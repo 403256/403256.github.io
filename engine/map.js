@@ -1,7 +1,7 @@
 class Map {
   constructor(jsonFileName) {
 
-    let data = fetch(jsonFileName)
+    fetch(jsonFileName)
         .then(response => response.json())
         .then(json => {
           let data = {};

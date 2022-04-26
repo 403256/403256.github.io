@@ -1,6 +1,6 @@
 let game = new GameEngine(loopMe);
 let player = new Sprite(0, 100, 20, 32, 'player1.png', 80, 60, {dx: 10});
-game.addMap(new Map('grassBiome.png', 64, 64, 8, 8));
+game.addMap(new Map('grassBiome.json', 64, 64, 8, 8));
 
 function loopMe() {
   player.move();
