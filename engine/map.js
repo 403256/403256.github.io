@@ -1,6 +1,5 @@
 class Map {
-  constructor(
-      jsonFileName) {
+  constructor(jsonFileName) {
 
     let data = fetch(jsonFileName)
         .then(response => response.json())
@@ -18,10 +17,8 @@ class Map {
 
           data.ctx = document.querySelector('canvas').getContext('2d');
 
-          return data;
+          this.assign(data);
         });
-
-    this.assign(data);
   }
 
   draw = () => {
