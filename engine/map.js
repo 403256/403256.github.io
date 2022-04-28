@@ -7,7 +7,6 @@ class Map {
           this.spritesheet = new Image();
           this.spritesheet.src = json.tilesets[0].image;
           this.map = json.layers;
-          this.layers = json.layers.keys();
 
           this.sheetInfo = {
             columns: json.tilesets[0].columns,
@@ -30,17 +29,19 @@ class Map {
   }
 
   draw = () => {
-    for(let i = 0; i < this.layers.length; i++) {
-      let map = this.map[this.layers[i]];
+    for(let i = 0; i < this.map.length; i++) {
+      const map = this.map[i];
 
       if(!map.visible) continue;
 
       for(let j = 0; j < map.data.length; j++) {
         let cell = map.data[j];
-        let sy = Math.floor(cell / this.sheetInfo.columns) * this.tileHeight;
-        let sx = (cell % this.sheetInfo.columns) * this.tileWidth;
-        let dy = Math.floor(j / this.widthInTiles) * this.tileHeight;
-        let dx = (j % this.widthInTiles) * this.tileWidth;
+        if(cell == 0) continue; // Don't bother with anything if it's blank
+        cell--; // Align the tile id for drawing
+        const sy = Math.floor(cell / this.sheetInfo.columns) * this.tileHeight;
+        const sx = (cell % this.sheetInfo.columns) * this.tileWidth;
+        const dy = Math.floor(j / this.widthInTiles) * this.tileHeight;
+        const dx = (j % this.widthInTiles) * this.tileWidth;
         this.ctx.drawImage(
             this.spritesheet,
             sx, sy, this.tileWidth, this.tileHeight,
