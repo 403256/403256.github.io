@@ -51,7 +51,7 @@ class Camera {
   drawScreen(map) {
     this.ctx.clearRect(0, 0, this.width, this.height);
 
-    map.draw();
+    map.draw(this.ctx, this.x, this.y, this.zoom);
 
     let length = Sprite.sprites.length;
     for(let i = 0; i < length; i++) {

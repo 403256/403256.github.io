@@ -23,12 +23,10 @@ class Map {
           this.heightInTiles = json.height;
           this.width = this.widthInTiles * this.tileWidth;
           this.height = this.heightInTiles * this.tileHeight;
-
-          this.ctx = document.querySelector('canvas').getContext('2d');
         });
   }
 
-  draw = () => {
+  draw = (ctx, offsetX, offsetY, zoom) => {
     for(let i = 0; i < this.map.length; i++) {
       const map = this.map[i];
 
@@ -40,9 +38,9 @@ class Map {
         cell--; // Align the tile id for drawing
         const sy = Math.floor(cell / this.sheetInfo.columns) * this.tileHeight;
         const sx = (cell % this.sheetInfo.columns) * this.tileWidth;
-        const dy = Math.floor(j / this.widthInTiles) * this.tileHeight;
-        const dx = (j % this.widthInTiles) * this.tileWidth;
-        this.ctx.drawImage(
+        const dy = Math.floor(j / this.widthInTiles) * this.tileHeight - offsetY;
+        const dx = (j % this.widthInTiles) * this.tileWidth - offsetX;
+        ctx.drawImage(
             this.spritesheet,
             sx, sy, this.tileWidth, this.tileHeight,
             dx, dy, this.tileWidth, this.tileHeight);
