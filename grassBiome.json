@@ -23,7 +23,7 @@
     {
       "columns":3,
       "firstgid": 1,
-      "image": "grassBiome.png",
+      "image": "imgs/grassBiome.png",
       "imageheight": 192,
       "imagewidth": 192, "spacing": 0, "tilewidth": 64, "tileheight": 64
     }
