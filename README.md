@@ -7,8 +7,9 @@ Objects:
 
 * `Camera`
   * _`move()`_
+  * `moveToCenter()`
   * `changeZoom()`
-  * _`drawScreen()`_
+  * `drawScreen()`
   * _`drawRect()`_
   * _`mouseX`_
   * _`mouseY`_
@@ -21,16 +22,15 @@ Objects:
   * `width`
   * `height`
   * `visible`
+  * `depth`
   * _`mirrorX`_
   * _`mirrorY`_
-  * `depth`
-  * _`rotate()`_
-  * `move()`
   * _`animationSpeed`_
-  * _`isTouching()`_
-  * _`setCollider()`_
+  * `rotate()`
+  * `move()`
+  * `isTouching()`
+  * `setCollider()`
   * `setVelocity()`
-  * _`destroy()`_
 * `Miscellaneous`
   * `start()`
   * `stop()`

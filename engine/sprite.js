@@ -46,6 +46,9 @@ class Sprite {
     this.dx = dx;
     this.dy = dy;
 
+    this.collider = null;
+    this.setCollider('rectangle');
+
     Sprite.sprites.push(this);
   }
 
@@ -113,5 +116,51 @@ class Sprite {
         x, y, width, height);
 
     this.nextFrame();
+  }
+
+  setCollider(shape) {
+    switch (shape) {
+      case "ellipse":
+        this.collider = angle => Math.sqrt(
+            (this.width / 2)**2 * Math.cos(angle)**2 +
+            (this.height / 2)**2 * Math.sin(angle)**2
+        );
+        break;
+
+      case "rectangle":
+        this.collider = angle => {
+          angle = angle % Math.PI;
+
+          let h = Math.abs(Math.tan(angle) * this.width / 2);
+          let w = Math.abs(this.height / 2 / Math.tan(angle));
+
+          if(h > this.height / 2) {
+            // top or bottom edge
+            return (this.height / 2) * Math.sin(Math.PI / 2) / Math.sin(angle);
+          } else if (angle < Math.PI / 2){
+            // left edge
+            return (this.width / 2) * Math.sin(Math.PI / 2) / Math.sin(Math.PI / 2 - angle);
+          } else {
+            // right edge
+            return (this.width / 2) * Math.sin(Math.PI / 2) / Math.sin(angle - Math.PI / 2);
+          }
+        }
+        break;
+      default:
+        throw Error(`Invalid collider shape: ${shape}`);
+    }
+  }
+
+  isTouching(sprite) {
+    const x = (this.x + this.width / 2) - (sprite.x + sprite.width / 2);
+    const y = (this.y + this.height / 2) - (sprite.y + sprite.height / 2);
+
+    const angle = Math.atan(y / x);
+    const dist = Math.sqrt(x**2 + y**2);
+
+    const minDistS1 = this.collider(angle);
+    const minDistS2 = sprite.collider(angle);
+
+    return Math.abs(minDistS1) + Math.abs(minDistS2) > dist;
   }
 }
