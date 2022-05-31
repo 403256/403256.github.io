@@ -26,7 +26,13 @@ class Map {
         });
   }
 
-  draw = (ctx, offsetX, offsetY, zoom) => {
+  checkTile(layerName, gid) {
+    for(let i = 0; i < this.map.length; i++) {
+      if(this.map[i].name == layerName) return this.map[i].data[gid];
+    }
+  }
+
+  draw = (offsetX, offsetY, zoom) => {
     for(let i = 0; i < this.map.length; i++) {
       const map = this.map[i];
 
@@ -40,7 +46,7 @@ class Map {
         const sx = (cell % this.sheetInfo.columns) * this.tileWidth;
         const dy = Math.floor(j / this.widthInTiles) * this.tileHeight - offsetY;
         const dx = (j % this.widthInTiles) * this.tileWidth - offsetX;
-        ctx.drawImage(
+        game.ctx.drawImage(
             this.spritesheet,
             sx, sy, this.tileWidth, this.tileHeight,
             dx, dy, this.tileWidth, this.tileHeight);

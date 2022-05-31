@@ -45,6 +45,8 @@ class Sprite {
 
     this.dx = dx;
     this.dy = dy;
+    this.ax = 0;
+    this.ay = 0.25;
 
     this.collider = null;
     this.setCollider('rectangle');
@@ -56,8 +58,17 @@ class Sprite {
    * Adjust the coordinates of the sprite based on current velocity
    */
   move() {
+    this.dx += this.ax;
+    this.dy += this.ay;
     this.x += this.dx;
     this.y += this.dy;
+
+    if(this.checkCollision()) {
+      this.dx -= this.ax;
+      this.dy -= this.ay;
+      this.x -= this.dx;
+      this.y -= this.dy;
+    }
   }
 
   /**
@@ -68,6 +79,11 @@ class Sprite {
   setVelocity(dx, dy) {
     this.dx = dx;
     this.dy = dy;
+  }
+
+  setAcceleration(ax, ay) {
+    this.ax = ax;
+    this.ay = ay;
   }
 
   /**
@@ -99,18 +115,17 @@ class Sprite {
 
   /**
    * Draw the sprite onscreen, update animation frame
-   * @param  {Object} ctx     canvas drawing context
    * @param  {Number} offsetX camera offset (x-axis)
    * @param  {Number} offsetY camera offset (y-axis)
    * @param  {Number} zoom    scale to draw sprite
    */
-  draw(ctx, offsetX, offsetY, zoom) {
+  draw(offsetX, offsetY, zoom) {
     let x = (this.x - offsetX);
     let y = (this.y - offsetY);
     let width = (this.width * zoom);
     let height = (this.height * zoom);
 
-    ctx.drawImage(
+    game.ctx.drawImage(
         this.src,
         this.sx, this.sy, this.sWidth, this.sHeight,
         x, y, width, height);
@@ -162,5 +177,25 @@ class Sprite {
     const minDistS2 = sprite.collider(angle);
 
     return Math.abs(minDistS1) + Math.abs(minDistS2) > dist;
+  }
+
+  /**
+   * check if the sprite is colliding with the landscape
+   * WARNING -- RELIES ON MAP LAYER TITLED 'barriers'
+   * @return {boolean} whether the sprite is embedded in the landscape
+   */
+  checkCollision() {
+    const q1 = Math.floor(this.x / game.currentMap.tileWidth);
+    const q2 = q1 + 1;
+    const q3 = q1 + game.currentMap.widthInTiles;
+    const q4 = q3 + 1;
+
+    if(game.currentMap.checkTile('barriers', q1) > 0 ||
+        game.currentMap.checkTile('barriers', q2) > 0 ||
+        game.currentMap.checkTile('barriers', q3) > 0 ||
+        game.currentMap.checkTile('barriers', q4) > 0) {
+      return true;
+    }
+    return false;
   }
 }

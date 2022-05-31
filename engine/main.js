@@ -1,7 +1,5 @@
-class GameEngine {
-  constructor(
-      updateFctn,
-      canvasParent = document.body) {
+const game = {
+  initial: (update, canvasParent = document.body) => {
     // Create canvas element for game
     this.canvas = document.createElement('CANVAS');
     this.canvas.width = 1000;
@@ -28,52 +26,52 @@ class GameEngine {
     // Add event handlers
     document.addEventListener('keydown', this);
     document.addEventListener('keyup', this);
-  }
+  },
 
-  handleEvent = (event) => {
+  handleEvent : (event) => {
     // console.log(event.type);
-  }
+  },
 
-  start = (forceStart = false) => {
+  start : (forceStart = false) => {
     if(!forceStart && document.readyState != 'complete') {
       window.addEventListener('load', this.start);
       return;
     }
     this.animation = requestAnimationFrame(this.loop);
-  }
+  },
 
-  stop = () => {
+  stop : () => {
     cancelAnimationFrame(this.animation);
-  }
+  },
 
-  loop = () => {
+  loop : () => {
     this.animation = requestAnimationFrame(this.loop);
     this.activeCamera.drawScreen(this.currentMap);
     this.update();
-  }
+  },
 
-  addCamera = (x, y, zoom) => {
-    let camera = new Camera(this.ctx, this.canvas.width, this.canvas.height, x, y, zoom);
+  addCamera : (x, y, zoom) => {
+    let camera = new Camera(this.canvas.width, this.canvas.height, x, y, zoom);
     return this.cameras.push(camera) - 1;
-  }
+  },
 
-  changeCamera = (cameraID) => {
+  changeCamera : (cameraID) => {
     this.activeCamera = this.cameras[cameraID];
-  }
+  },
 
-  addMap = (map) => {
+  addMap : (map) => {
     let index = this.maps.push(map) - 1;
 
     if(index == 0) this.currentMap = map;
 
     return index;
-  }
+  },
 
-  changeMap = (index) => {
+  changeMap : (index) => {
     this.currentMap = this.maps[index];
-  }
+  },
 
-  zoomCamera = (zoomFactor) => {
+  zoomCamera : (zoomFactor) => {
     this.activeCamera.changeZoom(zoomFactor);
-  }
+  },
 }

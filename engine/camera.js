@@ -5,9 +5,7 @@ class Camera {
    * @param {Number} y         Starting right edge of camera
    * @param {Number} [zoom=1]  Starting zoom
    */
-  constructor(ctx, width, height, x, y, zoom = 1) {
-    this.ctx = ctx;
-
+  constructor(width, height, x, y, zoom = 1) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -49,13 +47,13 @@ class Camera {
    * completely fill the screen with sprites in camera's view
    */
   drawScreen(map) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    game.ctx.clearRect(0, 0, this.width, this.height);
 
-    map.draw(this.ctx, this.x, this.y, this.zoom);
+    map.draw(this.x, this.y, this.zoom);
 
     let length = Sprite.sprites.length;
     for(let i = 0; i < length; i++) {
-      Sprite.sprites[i].draw(this.ctx, this.x, this.y, this.zoom);
+      Sprite.sprites[i].draw(this.x, this.y, this.zoom);
     }
   }
 }
