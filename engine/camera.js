@@ -39,8 +39,8 @@ class Camera {
     x -= this.width / 2;
     y -= this.height / 2;
 
-    this.x = x;
-    this.y = y;
+    this.x = Math.trunc(x);
+    this.y = Math.trunc(y);
   }
 
   /**
