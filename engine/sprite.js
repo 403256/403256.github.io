@@ -147,7 +147,7 @@ class Sprite {
           angle = angle % Math.PI;
 
           let h = Math.abs(Math.tan(angle) * this.width / 2);
-          let w = Math.abs(this.height / 2 / Math.tan(angle));
+          // let w = Math.abs(this.height / 2 / Math.tan(angle));
 
           if(h > this.height / 2) {
             // top or bottom edge
@@ -185,16 +185,41 @@ class Sprite {
    * @return {boolean} whether the sprite is embedded in the landscape
    */
   checkCollision() {
-    const q1 = Math.floor(this.x / game.currentMap.tileWidth);
-    const q2 = q1 + 1;
-    const q3 = q1 + game.currentMap.widthInTiles;
-    const q4 = q3 + 1;
+    const q1 = Math.floor(this.x / game.currentMap.tileWidth) +
+        Math.floor(this.y / game.currentMap.tileHeight) *
+          game.currentMap.widthInTiles;
+    const q2 = Math.floor((this.x + this.width) / game.currentMap.tileWidth) +
+        Math.floor(this.y / game.currentMap.tileHeight) *
+          game.currentMap.widthInTiles;
+    const q3 = Math.floor(this.x / game.currentMap.tileWidth) +
+        Math.floor((this.y + this.height) / game.currentMap.tileHeight) *
+          game.currentMap.widthInTiles;
+    const q4 = Math.floor((this.x + this.width) / game.currentMap.tileWidth) +
+        Math.floor((this.y + this.height) / game.currentMap.tileHeight) *
+          game.currentMap.widthInTiles;
 
-    if(game.currentMap.checkTile('barriers', q1) > 0 ||
-        game.currentMap.checkTile('barriers', q2) > 0 ||
-        game.currentMap.checkTile('barriers', q3) > 0 ||
-        game.currentMap.checkTile('barriers', q4) > 0) {
-      return true;
+    const tl = game.currentMap.checkTile('barriers', q1);
+    const tr = game.currentMap.checkTile('barriers', q2);
+    const bl = game.currentMap.checkTile('barriers', q3);
+    const br = game.currentMap.checkTile('barriers', q4);
+    if (tl > 0 && tr > 0) {
+      // top
+      this.y += game.currentMap.tileHeight - this.y % game.currentMap.tileHeight;
+      this.dy = 0;
+    } else if (bl > 0 && br > 0) {
+      // bottom
+      this.y -= this.y % game.currentMap.tileHeight -
+          (game.currentMap.tileHeight - this.height);
+      this.dy = 0;
+    } else if (tl > 0 && bl > 0) {
+      // left
+      this.x -= this.x % game.currentMap.tileWidth -
+          (game.currentMap.tileWidth - this.width);
+      this.dx = 0;
+    } else if (tr > 0 && br > 0) {
+      // right
+      this.x += game.currentMap.tileWidth - this.x % game.currentMap.tileWidth;
+      this.dx = 0;
     }
     return false;
   }
