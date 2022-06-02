@@ -57,19 +57,14 @@ class Sprite {
   /**
    * Adjust the coordinates of the sprite based on current velocity
    */
-  move() {
-    this.dx += this.ax;
-    this.dy += this.ay;
-    this.x += this.dx;
-    this.y += this.dy;
+   move() {
+     this.dx += this.ax;
+     this.dy += this.ay;
+     this.x += this.dx;
+     this.y += this.dy;
 
-    if(this.checkCollision()) {
-      this.dx -= this.ax;
-      this.dy -= this.ay;
-      this.x -= this.dx;
-      this.y -= this.dy;
-    }
-  }
+     this.correctCollision();
+   }
 
   /**
   * Change the sprite's velocity
@@ -184,7 +179,7 @@ class Sprite {
    * WARNING -- RELIES ON MAP LAYER TITLED 'barriers'
    * @return {boolean} whether the sprite is embedded in the landscape
    */
-  checkCollision() {
+  correctCollision() {
     const q1 = Math.floor(this.x / game.currentMap.tileWidth) +
         Math.floor(this.y / game.currentMap.tileHeight) *
           game.currentMap.widthInTiles;
@@ -221,6 +216,7 @@ class Sprite {
       this.x += game.currentMap.tileWidth - this.x % game.currentMap.tileWidth;
       this.dx = 0;
     }
+
     return false;
   }
 }

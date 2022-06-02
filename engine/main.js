@@ -1,5 +1,5 @@
 const game = {
-  initial: (update, canvasParent = document.body) => {
+  initial: function(update, canvasParent = document.body) {
     // Create canvas element for game
     game.canvas = document.createElement('CANVAS');
     game.canvas.width = 1000;
@@ -16,10 +16,6 @@ const game = {
 
     game.update = update;
 
-    game.sprites = [];
-    game.maps = [];
-
-    game.cameras = [];
     game.addCamera(0, 0, 1);
     game.activeCamera = game.cameras[0];
 
@@ -27,6 +23,10 @@ const game = {
     document.addEventListener('keydown', game);
     document.addEventListener('keyup', game);
   },
+
+  sprites : [],
+  maps : [],
+  cameras : [],
 
   handleEvent : (event) => {
     // console.log(event.type);
