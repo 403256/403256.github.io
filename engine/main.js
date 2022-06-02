@@ -27,9 +27,22 @@ const game = {
   sprites : [],
   maps : [],
   cameras : [],
+  keysPressed : [],
+  newKeys : [],
 
   handleEvent : (event) => {
-    // console.log(event.type);
+    switch(event.type) {
+      case 'keydown':
+        game.keysPressed.push(event.code);
+        game.newKeys.push(event.code);
+        // TODO: finish implementing code for newKeys
+        break;
+      case 'keyup':
+        game.keysPressed = game.keysPressed.filter(val => val != event.code);
+        break;
+      default:
+        throw Error(`Invalid event type: ${event.type}`);
+    }
   },
 
   start : (forceStart = false) => {

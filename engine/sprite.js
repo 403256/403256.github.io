@@ -57,14 +57,14 @@ class Sprite {
   /**
    * Adjust the coordinates of the sprite based on current velocity
    */
-   move() {
-     this.dx += this.ax;
-     this.dy += this.ay;
-     this.x += this.dx;
-     this.y += this.dy;
+  move() {
+    this.dx += this.ax;
+    this.dy += this.ay;
+    this.x += this.dx;
+    this.y += this.dy;
 
-     this.correctCollision();
-   }
+    this.correctCollision();
+  }
 
   /**
   * Change the sprite's velocity
